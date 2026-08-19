@@ -1,30 +1,85 @@
 import streamlit as st
+import time
 
-# Mengatur tampilan tab web
-st.set_page_config(page_title="Ada Pesan Buat Kamu 💌", page_icon="💖")
+# 1. Mengatur konfigurasi halaman
+st.set_page_config(page_title="Special for You 💖", page_icon="💌", layout="centered")
 
-# Judul Halaman
-st.title("Hai! Prisma💖")
-st.write("Aku ada sesuatu nih buat kamu, coba dibuka deh...")
+# 2. Menambahkan sedikit CSS biar font-nya lebih cantik dan berwarna
+st.markdown("""
+    <style>
+    .judul {
+        font-size: 35px !important;
+        font-weight: bold;
+        color: #FF4B4B;
+        text-align: center;
+        font-family: 'Comic Sans MS', cursive, sans-serif;
+    }
+    .teks-manis {
+        font-size: 20px;
+        color: #FF748B;
+        text-align: center;
+    }
+    </style>
+""", unsafe_allow_html=True)
 
-# Memakai expander untuk memberikan sensasi 'membuka amplop/surat'
-with st.expander("Buka pesannya di sini ya"):
-    st.write("Makasih ya udah selalu jadi alasan aku buat senyum setiap hari.")
-    st.write("Cuma mau ngingetin, jangan lupa istirahat yang cukup dan makan yang enak!")
+# 3. Membuat sistem halaman (Session State)
+if 'halaman' not in st.session_state:
+    st.session_state.halaman = 1
+
+def lanjut():
+    st.session_state.halaman += 1
+
+# ==========================================
+# HALAMAN 1: HALAMAN PEMBUKA
+# ==========================================
+if st.session_state.halaman == 1:
+    st.markdown('<p class="judul">Haloooo! 👋</p>', unsafe_allow_html=True)
     
-    st.write("Btw, seneng gak dapet kejutan ini?")
+    # Memasukkan GIF Lucu (Bisa diganti URL-nya)
+    st.image("https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExYzRzajh6Z3BwY3ZqYnU3aDdnZzZ6bWZ1b3QzbWp3c29vZG1qZzF0dCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/L1QMTl9ggmYGoCu7oj/giphy.gif", use_column_width=True)
     
-    # Membuat tombol pilihan berdampingan
+    st.markdown('<p class="teks-manis">Aku punya sesuatu nih buat kamu, coba dicek ya...</p>', unsafe_allow_html=True)
+    
+    # Tombol ditaruh di tengah
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        st.button("Buka Suratnya 💌", on_click=lanjut, use_container_width=True)
+
+# ==========================================
+# HALAMAN 2: PESAN UTAMA
+# ==========================================
+elif st.session_state.halaman == 2:
+    # Efek dramatis loading sebentar
+    with st.spinner("Membuka amplop..."):
+        time.sleep(2) # Jeda 2 detik biar deg-degan
+        
+    st.markdown('<p class="judul">Cuma mau bilang...</p>', unsafe_allow_html=True)
+    
+    st.success("Makasih yaa udah selalu ada dan jadi alasan aku buat senyum akhir-akhir ini. You make my days so much brighter! ✨")
+    st.info("Jangan lupa makan yang teratur, kurang-kurangin begadangnya, dan tetep semangat ya!")
+    
+    # GIF Berpelukan/Lucu
+    st.image("https://media.giphy.com/media/26BRv0ThflsHCqDrG/giphy.gif", use_column_width=True)
+    
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        st.button("Ada satu lagi nih 👉", on_click=lanjut, use_container_width=True)
+
+# ==========================================
+# HALAMAN 3: AJAKAN / CLOSING
+# ==========================================
+elif st.session_state.halaman == 3:
+    st.markdown('<p class="judul">Btw...</p>', unsafe_allow_html=True)
+    st.write("Weekend ini sibuk nggak? Jalan yuk? Makan es krim kek, atau nyari angin ajaa.")
+    
     col1, col2 = st.columns(2)
-    
     with col1:
-        if st.button("Seneng banget! ❤️"):
-            # Mengeluarkan animasi balon
+        if st.button("Ayok gas! 🍦❤️", use_container_width=True):
             st.balloons()
-            st.success("Yeay! Nanti weekend kita jalan yuk! 🍕")
+            st.success("Yeayyy! Nanti aku chat buat janjian jamnya ya. See you! 🥰")
+            st.image("https://media.giphy.com/media/ibolLe3mO2ZqqsEpOT/giphy.gif", use_column_width=True) # GIF Happy
             
     with col2:
-        if st.button("Biasa aja tuh 😜"):
-            # Mengeluarkan efek salju
+        if st.button("Hmm, lagi sibuk/mager 🥺", use_container_width=True):
             st.snow()
-            st.error("Yahhh, gapapa deh, yang penting kamu tetep manis! ✨")
+            st.error("Yahh... yaudah deh gapapa, nanti kapan-kapan aja yaa! Tetep semangat! ✨")
