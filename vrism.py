@@ -1,85 +1,69 @@
 import streamlit as st
-import time
 
-# 1. Mengatur konfigurasi halaman
-st.set_page_config(page_title="Special for You 💖", page_icon="💌", layout="centered")
+# Mengatur tampilan halaman
+st.set_page_config(page_title="Pop It Spesial 🫧", page_icon="💖", layout="centered")
 
-# 2. Menambahkan sedikit CSS biar font-nya lebih cantik dan berwarna
+# Sedikit CSS biar rapi
 st.markdown("""
     <style>
     .judul {
-        font-size: 35px !important;
+        font-size: 30px !important;
         font-weight: bold;
         color: #FF4B4B;
         text-align: center;
-        font-family: 'Comic Sans MS', cursive, sans-serif;
     }
-    .teks-manis {
-        font-size: 20px;
-        color: #FF748B;
+    .instruksi {
         text-align: center;
+        color: #555555;
+        font-size: 18px;
+        margin-bottom: 20px;
     }
     </style>
 """, unsafe_allow_html=True)
 
-# 3. Membuat sistem halaman (Session State)
-if 'halaman' not in st.session_state:
-    st.session_state.halaman = 1
+st.markdown('<p class="judul">Main Pop It Dulu Yuk! 🫧</p>', unsafe_allow_html=True)
+st.markdown('<p class="instruksi">Pecahin semua gelembung di bawah ini buat ngebuka pesan rahasia dari aku ya!</p>', unsafe_allow_html=True)
 
-def lanjut():
-    st.session_state.halaman += 1
+# Menentukan jumlah gelembung (4 baris x 4 kolom = 16)
+total_bubbles = 16
 
-# ==========================================
-# HALAMAN 1: HALAMAN PEMBUKA
-# ==========================================
-if st.session_state.halaman == 1:
-    st.markdown('<p class="judul">Haloooo! 👋</p>', unsafe_allow_html=True)
-    
-    # Memasukkan GIF Lucu (Bisa diganti URL-nya)
-    st.image("https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExYzRzajh6Z3BwY3ZqYnU3aDdnZzZ6bWZ1b3QzbWp3c29vZG1qZzF0dCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/L1QMTl9ggmYGoCu7oj/giphy.gif", use_column_width=True)
-    
-    st.markdown('<p class="teks-manis">Aku punya sesuatu nih buat kamu, coba dicek ya...</p>', unsafe_allow_html=True)
-    
-    # Tombol ditaruh di tengah
-    col1, col2, col3 = st.columns([1, 2, 1])
-    with col2:
-        st.button("Buka Suratnya 💌", on_click=lanjut, use_container_width=True)
+# Inisialisasi state untuk mengingat gelembung mana yang sudah dipencet
+if 'popped' not in st.session_state:
+    st.session_state.popped = [False] * total_bubbles
 
-# ==========================================
-# HALAMAN 2: PESAN UTAMA
-# ==========================================
-elif st.session_state.halaman == 2:
-    # Efek dramatis loading sebentar
-    with st.spinner("Membuka amplop..."):
-        time.sleep(2) # Jeda 2 detik biar deg-degan
-        
-    st.markdown('<p class="judul">Cuma mau bilang...</p>', unsafe_allow_html=True)
-    
-    st.success("Makasih yaa udah selalu ada dan jadi alasan aku buat senyum akhir-akhir ini. You make my days so much brighter! ✨")
-    st.info("Jangan lupa makan yang teratur, kurang-kurangin begadangnya, dan tetep semangat ya!")
-    
-    # GIF Berpelukan/Lucu
-    st.image("https://media.giphy.com/media/26BRv0ThflsHCqDrG/giphy.gif", use_column_width=True)
-    
-    col1, col2, col3 = st.columns([1, 2, 1])
-    with col2:
-        st.button("Ada satu lagi nih 👉", on_click=lanjut, use_container_width=True)
+# Fungsi untuk memecahkan gelembung
+def pop_bubble(index):
+    st.session_state.popped[index] = True
 
-# ==========================================
-# HALAMAN 3: AJAKAN / CLOSING
-# ==========================================
-elif st.session_state.halaman == 3:
-    st.markdown('<p class="judul">Btw...</p>', unsafe_allow_html=True)
-    st.write("Weekend ini sibuk nggak? Jalan yuk? Makan es krim kek, atau nyari angin ajaa.")
+# Membuat Grid 4 kolom
+cols = st.columns(4)
+
+# Menampilkan tombol-tombol Pop It
+for i in range(total_bubbles):
+    col = cols[i % 4]
+    with col:
+        # Jika True (sudah dipencet), tampilkan tombol hati (disabled biar nggak bisa dipencet lagi)
+        if st.session_state.popped[i]:
+            st.button("💖", key=f"btn_{i}", disabled=True, use_container_width=True)
+        # Jika False (belum dipencet), tampilkan gelembung
+        else:
+            st.button("🫧", key=f"btn_{i}", on_click=pop_bubble, args=(i,), use_container_width=True)
+
+st.write("---")
+
+# === BAGIAN KEJUTAN (MUNCUL KALAU SEMUA SUDAH DIPENCET) ===
+# Mengecek apakah semua item di dalam list st.session_state.popped bernilai True
+if all(st.session_state.popped):
+    st.balloons() # Mengeluarkan animasi balon
+    st.success("Yeay! Semua gelembung udah pecah! 🎉")
     
-    col1, col2 = st.columns(2)
-    with col1:
-        if st.button("Ayok gas! 🍦❤️", use_container_width=True):
-            st.balloons()
-            st.success("Yeayyy! Nanti aku chat buat janjian jamnya ya. See you! 🥰")
-            st.image("https://media.giphy.com/media/ibolLe3mO2ZqqsEpOT/giphy.gif", use_column_width=True) # GIF Happy
-            
-    with col2:
-        if st.button("Hmm, lagi sibuk/mager 🥺", use_container_width=True):
-            st.snow()
-            st.error("Yahh... yaudah deh gapapa, nanti kapan-kapan aja yaa! Tetep semangat! ✨")
+    st.markdown('<p class="judul">Surprise! 💌</p>', unsafe_allow_html=True)
+    st.write("Makasih ya udah sabar mencetin gelembungnya satu-satu, hehe. Ini bukti kalau kamu emang sabar banget ngadepin aku.")
+    st.write("Cuma mau bilang, *I'm so lucky to have you*. Jangan lupa senyum hari ini dan tetep semangat ya! ✨")
+    
+    # Tombol opsional kalau mau di-reset
+    col_reset1, col_reset2, col_reset3 = st.columns([1, 2, 1])
+    with col_reset2:
+        if st.button("Tutup Pesan (Reset) 🔄", use_container_width=True):
+            st.session_state.popped = [False] * total_bubbles
+            st.rerun()
